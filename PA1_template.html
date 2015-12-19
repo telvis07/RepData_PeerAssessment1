@@ -102,7 +102,7 @@ head(sum_by_day)</code></pre>
 </div>
 <div id="what-is-the-average-daily-activity-pattern" class="section level2">
 <h2>What is the average daily activity pattern?</h2>
-<p>Make a time series plot (i.e. type = “l”) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)</p>
+<p>Make a time series plot (i.e. type = “l”) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis). The black horizontal line represents the mean steps per interval for all data.</p>
 <pre class="r"><code>  # combine the date and minutes to make a date/timestamp
   steps_by_interval &lt;- summarize(group_by(df, interval), steps=mean(steps, na.rm=TRUE))
 

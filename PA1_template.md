@@ -81,7 +81,7 @@ median(sum_by_day$steps)
 
 
 ## What is the average daily activity pattern?
-Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis). The black horizontal line represents the mean steps per interval for all data.
 
 
 ```r
