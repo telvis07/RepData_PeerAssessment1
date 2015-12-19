@@ -80,20 +80,20 @@ median(sum_by_day$steps)
 
 
 ## What is the average daily activity pattern?
-Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis). The black horizontal line represents the mean steps per interval for all data.
+Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis).  
 
 
 ```r
-  # combine the date and minutes to make a date/timestamp
-  steps_by_interval <- summarize(group_by(df, interval), steps=mean(steps, na.rm=TRUE))
+# combine the date and minutes to make a date/timestamp
+steps_by_interval <- summarize(group_by(df, interval), steps=mean(steps, na.rm=TRUE))
 
-  # plot time-series over the five minute intervals
-  plot(steps_by_interval$interval, 
-       steps_by_interval$steps, 
-       type="l", col="blue", xlab="5-minute interval", ylab="Steps per 5 minute interval")
-  
-  # plot a horizontal line of the mean() steps for a 5-minute interval over all the days
-  abline(h = mean(steps_by_interval$steps), lwd=5, lty=1)
+# plot time-series over the five minute intervals
+plot(steps_by_interval$interval, 
+     steps_by_interval$steps, 
+     type="l", col="blue", xlab="5-minute interval", ylab="Steps per 5 minute interval")
+
+# plot a horizontal line of the mean() steps for a 5-minute interval over all the days
+abline(h = mean(steps_by_interval$steps), lwd=5, lty=1)
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-7-1.png) 
@@ -102,7 +102,7 @@ Which 5-minute interval, on average across all the days in the dataset, contains
 
 
 ```r
-  steps_by_interval[which.max(steps_by_interval$steps),"interval"]
+steps_by_interval[which.max(steps_by_interval$steps),"interval"]
 ```
 
 ```
@@ -121,7 +121,8 @@ Calculate and report the total number of missing values in the dataset (i.e. the
 ```r
 df <- read.csv("activity.csv", na.strings = "NA", stringsAsFactors = FALSE)
 df <- transform(df, date=ymd(date))
-print(sprintf("Number of na steps : %d", sum(is.na(df$steps))))
+num_na <- sum(is.na(df$steps))
+print(sprintf("Number of na steps : %d", num_na))
 ```
 
 ```
@@ -131,25 +132,24 @@ print(sprintf("Number of na steps : %d", sum(is.na(df$steps))))
 Let's replace all values with the mean per interval over all days. 
 
 ```r
-  mean_by_interval <- summarize(group_by(df, interval), steps=mean(steps, na.rm=TRUE))
+mean_by_interval <- summarize(group_by(df, interval), steps=mean(steps, na.rm=TRUE))
 ```
   
 update rows with NA for steps. use mean_by_interval for the 'interval'
 
 ```r
-  for (i in 1:nrow(df)){
-    if (is.na(df[i,"steps"])){
-      df[i,"steps"] <- mean_by_interval[which(mean_by_interval$interval==df[i,"interval"]), "steps"]
-    }
+for (i in 1:nrow(df)){
+  if (is.na(df[i,"steps"])){
+    df[i,"steps"] <- mean_by_interval[which(mean_by_interval$interval==df[i,"interval"]), "steps"]
   }
+}
 ```
 
-Generate a new histogram, median and mean for the imputed data. Using this technique, the mean and median are nearly identical to the values with `NA` values removed. This makes sense since I inserted a values that are equal the mean.
+Generate a new histogram, median and mean for the imputed data. Using this technique, the mean and median are nearly identical to the values with `NA` values removed. This makes sense since I inserted 2304 values that are equal the mean for each interval.
 
 
 ```r
-by_day <- group_by(df, date)
-sum_by_day <- summarize(by_day, steps=sum(steps, na.rm=TRUE))
+sum_by_day <- summarize(group_by(df, date), steps=sum(steps, na.rm=TRUE))
 sum_by_day <- arrange(as.data.frame(sum_by_day), desc(steps))
 
 # histogram
@@ -180,31 +180,31 @@ median(sum_by_day$steps)
 Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
 
 ```r
-  # boolean 'TRUE' is Sat or Sun. Else FALSE.
-  df <- transform(df,is_weekend=weekdays(df$date) %in% c("Saturday", "Sunday"))
-  
-  # Create factor values based on TRUE/FALSE
-  df <- mutate(df, is_weekend=factor(df$is_weekend, levels=c(FALSE, TRUE), 
-                                     labels=c("weekday", "weekend")))
+# boolean 'TRUE' is Sat or Sun. Else FALSE.
+df <- transform(df,is_weekend=weekdays(df$date) %in% c("Saturday", "Sunday"))
+
+# Create factor values based on TRUE/FALSE
+df <- mutate(df, is_weekend=factor(df$is_weekend, levels=c(FALSE, TRUE), 
+                                   labels=c("weekday", "weekend")))
 ```
 
 Now let's calcuate the mean for over the 5-minute intervals for weekdays and weekends.  
 
 ```r
-  # calculate mean per interval for 'weekdays'
-  mean_by_interval_weekday <- summarize(group_by(subset(df, is_weekend=='weekday'), interval), 
-                                        steps=mean(steps, na.rm=TRUE))
-  max_for_weekday <- max(mean_by_interval_weekday$steps)
-  
-  # calculate mean per interval for 'weekends'
-  mean_by_interval_weekend <- summarize(group_by(subset(df, is_weekend=='weekend'), interval), 
-                                        steps=mean(steps, na.rm=TRUE))
-  max_for_weekend <- max(mean_by_interval_weekend$steps)
-  
-  # combine data.frames with means summmaries
-  mean_by_interval_weekday$is_weekend='weekday'
-  mean_by_interval_weekend$is_weekend='weekend'
-  mean_by_interval <- rbind(mean_by_interval_weekday, mean_by_interval_weekend)
+# calculate mean per interval for 'weekdays'
+mean_by_interval_weekday <- summarize(group_by(subset(df, is_weekend=='weekday'), interval), 
+                                      steps=mean(steps, na.rm=TRUE))
+max_for_weekday <- max(mean_by_interval_weekday$steps)
+
+# calculate mean per interval for 'weekends'
+mean_by_interval_weekend <- summarize(group_by(subset(df, is_weekend=='weekend'), interval), 
+                                      steps=mean(steps, na.rm=TRUE))
+max_for_weekend <- max(mean_by_interval_weekend$steps)
+
+# combine data.frames with means summmaries
+mean_by_interval_weekday$is_weekend='weekday'
+mean_by_interval_weekend$is_weekend='weekend'
+mean_by_interval <- rbind(mean_by_interval_weekday, mean_by_interval_weekend)
 ```
 
 Now let's plot the `weekday` vs. `weekend` data aggregated over all weekdays of weekends.
@@ -212,7 +212,7 @@ Now let's plot the `weekday` vs. `weekend` data aggregated over all weekdays of 
 
 ```r
   # panel plot with facet on 'is_weekend'
-  qplot(interval, steps, data=mean_by_interval, geom="line", facets = is_weekend ~.)
+qplot(interval, steps, data=mean_by_interval, geom="line", facets = is_weekend ~.)
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-15-1.png) 
@@ -221,8 +221,8 @@ The plot shows the max values for `weekdays` is 230.3781971 steps and for `weeke
 
 
 ```r
-  # Both the median and max for weekdays is greater than on weekends
-  summary(mean_by_interval_weekday$steps)
+# Both the median and max for weekdays is greater than on weekends
+summary(mean_by_interval_weekday$steps)
 ```
 
 ```
@@ -231,7 +231,7 @@ The plot shows the max values for `weekdays` is 230.3781971 steps and for `weeke
 ```
 
 ```r
-  summary(mean_by_interval_weekend$steps)
+summary(mean_by_interval_weekend$steps)
 ```
 
 ```
