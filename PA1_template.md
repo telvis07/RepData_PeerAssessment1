@@ -15,14 +15,13 @@ library(dplyr)
 library(ggplot2)
 ```
 
-Lets filter rows that have `NA` values for steps. Convert date string to POSIXlt objects.
-
+Let's load the data
 
 ```r
 df <- read.csv("activity.csv", na.strings = "NA", stringsAsFactors = FALSE)
 ```
 
-For now, let's remove all the is.na rows.
+Lets filter rows that have `NA` values for steps and convert date string to POSIXlt objects.
 
 ```r
 df <- subset(df, !is.na(steps))

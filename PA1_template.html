@@ -72,9 +72,9 @@ img {
 <pre class="r"><code>library(lubridate)
 library(dplyr)
 library(ggplot2)</code></pre>
-<p>Lets filter rows that have <code>NA</code> values for steps. Convert date string to POSIXlt objects.</p>
+<p>Let’s load the data</p>
 <pre class="r"><code>df &lt;- read.csv(&quot;activity.csv&quot;, na.strings = &quot;NA&quot;, stringsAsFactors = FALSE)</code></pre>
-<p>For now, let’s remove all the is.na rows.</p>
+<p>Lets filter rows that have <code>NA</code> values for steps and convert date string to POSIXlt objects.</p>
 <pre class="r"><code>df &lt;- subset(df, !is.na(steps))
 df &lt;- transform(df, date=ymd(date))</code></pre>
 </div>
