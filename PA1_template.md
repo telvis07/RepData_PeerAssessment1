@@ -55,7 +55,7 @@ Make a histogram of the total number of steps taken each day
 
 
 ```r
-hist(sum_by_day$steps, col="blue", main="Histogram of steps taken per day")
+hist(sum_by_day$steps, col="blue", main="Histogram of steps taken per day", xlab = "Steps")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
@@ -91,7 +91,7 @@ Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and 
   # plot time-series over the five minute intervals
   plot(steps_by_interval$interval, 
        steps_by_interval$steps, 
-       type="l", col="blue", xlab="Date", ylab="Steps per 5 minute interval")
+       type="l", col="blue", xlab="5-minute interval", ylab="Steps per 5 minute interval")
   
   # plot a horizontal line of the mean() steps for a 5-minute interval over all the days
   abline(h = mean(steps_by_interval$steps), lwd=5, lty=1)
@@ -145,7 +145,7 @@ update rows with NA for steps. use mean_by_interval for the 'interval'
   }
 ```
 
-Generate a new histogram, median and mean for the imputed data. Using this technique, the mean and median are nearly identical to the values with `NA` values removed. This makes sense since I inserted a bunch of values that equal the mean.
+Generate a new histogram, median and mean for the imputed data. Using this technique, the mean and median are nearly identical to the values with `NA` values removed. This makes sense since I inserted a values that are equal the mean.
 
 
 ```r
@@ -208,7 +208,7 @@ Now let's calcuate the mean for over the 5-minute intervals for weekdays and wee
   mean_by_interval <- rbind(mean_by_interval_weekday, mean_by_interval_weekend)
 ```
 
-Now let's plot the `weekday` vs. `weekend` steps aggregate over all week days of weekend days.
+Now let's plot the `weekday` vs. `weekend` data aggregated over all weekdays of weekends.
 
 
 ```r
@@ -218,7 +218,7 @@ Now let's plot the `weekday` vs. `weekend` steps aggregate over all week days of
 
 ![](PA1_template_files/figure-html/unnamed-chunk-15-1.png) 
 
-The plot shows the max values for `weekday` days is around 230.3781971 steps. For `weekend` days its 166.6391509.
+The plot shows the max values for `weekdays` is 230.3781971 steps and for `weekends` its 166.6391509. The user logs more steps on weekdays than on weekends.
 
 
 ```r
